@@ -297,18 +297,12 @@
   <div class="card" id="card">
     <div class="card-top">
       <span class="game-title">Does this make me look fat?</span>
-      <div class="top-right">
-        <span class="q-num" id="q-num">Q1</span>
-        <span class="heart" id="heart">♥</span>
-      </div>
+      <span class="heart" id="heart">♥</span>
     </div>
 
     <div id="game-content" class="fade-in">
       <p class="question-text" id="question-text"></p>
       <div class="answers" id="answers"></div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
     </div>
   </div>
 
@@ -339,248 +333,521 @@
 
     const TREE = {
 
-      // ── GOLDEN PATH (q1–q15) ──────────────────────────────────────────────
+      // ── GOLDEN PATH (q1–q35) ──────────────────────────────────────────────
       // Rule: answer index 1 always continues the golden path.
       // Answer index 0 always routes to a doom corridor.
+      // The winning secret: brutal, uncomfortable honesty. Every. Single. Time.
+      // Each question flows directly from the previous honest answer.
+      // The conversation begins with a bum, and ends with a confession.
 
       q1: {
-        q: "Does this dress make me look fat?",
+        q: "Does my bum look big in this?",
         a: [
-          { t: "No. You look absolutely gorgeous.",            n: "da1" },
-          { t: "A little, honestly. Try the blue one.",        n: "q2"  }
+          { t: "No. You look absolutely gorgeous.",                          n: "da1" },
+          { t: "A bit. The dark jeans are more flattering.",                 n: "q2"  }
         ]
       },
       q2: {
-        q: "You hesitated just then. What were you actually thinking?",
+        q: "The dark jeans. You always say the dark jeans.",
         a: [
-          { t: "Nothing. I wasn't hesitating at all.",         n: "da1" },
-          { t: "That the blue dress really is better on you.", n: "q3"  }
+          { t: "Because they genuinely are the most flattering thing you own.", n: "db1" },
+          { t: "Because the dark jeans always work. That's why I say it.",      n: "q3"  }
         ]
       },
       q3: {
-        q: "My mother thinks you never really liked her.",
+        q: "So you've thought about this. You have opinions about my clothes.",
         a: [
-          { t: "That's not true. I've always made an effort.", n: "db1" },
-          { t: "Your mother isn't wrong.",                     n: "q4"  }
+          { t: "I just want you to feel your best. That's all it is.",       n: "da1" },
+          { t: "Of course I do. You ask me most mornings.",                  n: "q4"  }
         ]
       },
       q4: {
-        q: "Do you remember the exact date of our first anniversary?",
+        q: "And most mornings you say I look fine.",
         a: [
-          { t: "Of course. It's the most important date in my life.", n: "da1" },
-          { t: "Not off the top of my head, no.",                    n: "q5"  }
+          { t: "Because most mornings you look absolutely fine.",            n: "da1" },
+          { t: "Most mornings you do look fine.",                            n: "q5"  }
         ]
       },
       q5: {
-        q: "Sarah says you were flirting with her at the party. Were you?",
+        q: "Most mornings. What about the other mornings?",
         a: [
-          { t: "Absolutely not. I can't believe she'd say that.", n: "db1" },
-          { t: "I was being friendly. She may have misread it.", n: "q6"  }
+          { t: "The other mornings you look even better.",                   n: "da1" },
+          { t: "The other mornings I say it anyway. Because it's easier.",   n: "q6"  }
         ]
       },
       q6: {
-        q: "Be honest. Do you actually like my friends?",
+        q: "Easier than what?",
         a: [
-          { t: "Yes! They're all wonderful people.",           n: "dc1" },
-          { t: "Some of them, yes. Not all of them.",          n: "q7"  }
+          { t: "Easier than finding the right words. Not easier than honesty.", n: "db1" },
+          { t: "Than having this conversation.",                                n: "q7"  }
         ]
       },
       q7: {
-        q: "My sister earns considerably more than you. Does that bother you?",
+        q: "We're having it now.",
         a: [
-          { t: "Not at all. Good for her, honestly.",          n: "dc1" },
-          { t: "A bit, yes. I'd rather not discuss it.",       n: "q8"  }
+          { t: "We don't need to be. Everything is fine.",                   n: "db1" },
+          { t: "We are.",                                                    n: "q8"  }
         ]
       },
       q8: {
-        q: "Were you actually listening to me just now?",
+        q: "Is there anything else you say just because it's easier?",
         a: [
-          { t: "Yes. Every single word. You were saying...",   n: "da1" },
-          { t: "Not entirely, no. I'm sorry.",                 n: "q9"  }
+          { t: "No. I always try to say exactly what I mean.",               n: "db1" },
+          { t: "A few things, yes.",                                         n: "q9"  }
         ]
       },
       q9: {
-        q: "Why did you just say I looked nice?",
+        q: "Like what.",
         a: [
-          { t: "Because you do! You always look nice.",        n: "db1" },
-          { t: "You looked like you needed to hear it.",       n: "q10" }
+          { t: "Like 'you look great' when I mean 'you look fine'. Small things.", n: "da1" },
+          { t: "Like 'of course I was listening.' Like 'no, I'd never noticed her.'", n: "q10" }
         ]
       },
       q10: {
-        q: "Do you think about your ex?",
+        q: "Never noticed who.",
         a: [
-          { t: "Never. She means absolutely nothing to me.",   n: "dc1" },
-          { t: "Occasionally. Less than I used to.",           n: "q11" }
+          { t: "No one. That was a hypothetical.",                           n: "db1" },
+          { t: "That came out wrong.",                                       n: "q11" }
         ]
       },
       q11: {
-        q: "Am I the funniest person you've ever dated?",
+        q: "No it didn't. Who.",
         a: [
-          { t: "Without question. Absolutely, yes.",           n: "da1" },
-          { t: "Top three, I'd say.",                          n: "q12" }
+          { t: "There's no one. I phrased it badly.",                        n: "db1" },
+          { t: "The woman at the gym. The one with the red car.",             n: "q12" }
         ]
       },
       q12: {
-        q: "You think this house could be cleaner, don't you?",
+        q: "How do you know what car she drives?",
         a: [
-          { t: "No, it's perfect. You keep it immaculate.",   n: "db1" },
-          { t: "Yes, I do.",                                   n: "q13" }
+          { t: "Everyone knows everyone's car there. It's a small car park.", n: "db1" },
+          { t: "We've spoken a few times. In the car park.",                  n: "q13" }
         ]
       },
       q13: {
-        q: "That woman at the restaurant. How many times did you look at her?",
+        q: "About what.",
         a: [
-          { t: "I didn't look at her once. I only see you.",  n: "dc1" },
-          { t: "Two or three times. She had an interesting jacket.", n: "q14" }
+          { t: "Literally nothing. The weather. Car park things.",            n: "da1" },
+          { t: "Nothing. Small talk. The kind you have with strangers.",      n: "q14" }
         ]
       },
       q14: {
-        q: "Do you think I'm getting more difficult to live with?",
+        q: "She's not a stranger if you know her car.",
         a: [
-          { t: "No. You're an absolute joy. Every single day.", n: "da1" },
-          { t: "In some ways, yes. But so am I.",               n: "q15" }
+          { t: "Knowing someone's car doesn't mean you know them.",          n: "da1" },
+          { t: "That's fair.",                                               n: "q15" }
         ]
       },
       q15: {
-        q: "Last question. I need you to be completely, brutally honest. Do you love me?",
+        q: "Have you ever thought about her in a way you shouldn't?",
         a: [
-          { t: "More than anything in the entire world. Forever and always.", n: "da1" },
-          { t: "Yes. Even when it's hard.",                                   n: "WIN"  }
+          { t: "No. Absolutely not. She's just someone I see occasionally.", n: "db1" },
+          { t: "Once. Briefly. It wasn't anything.",                         n: "q16" }
+        ]
+      },
+      q16: {
+        q: "Once is enough.",
+        a: [
+          { t: "It really wasn't. It was a passing thought, nothing more.",  n: "da1" },
+          { t: "I know.",                                                    n: "q17" }
+        ]
+      },
+      q17: {
+        q: "My sister said she saw you talking to someone after football last week. Was it her?",
+        a: [
+          { t: "Your sister must have mistaken me for someone else.",         n: "db1" },
+          { t: "Yes.",                                                       n: "q18" }
+        ]
+      },
+      q18: {
+        q: "What were you talking about.",
+        a: [
+          { t: "Nothing worth mentioning. The usual kind of thing.",         n: "da1" },
+          { t: "She'd had an argument with someone. She wanted to vent.",    n: "q19" }
+        ]
+      },
+      q19: {
+        q: "Why would she come to you.",
+        a: [
+          { t: "I have no idea. I barely know her.",                         n: "dc1" },
+          { t: "I don't know. I was there.",                                 n: "q20" }
+        ]
+      },
+      q20: {
+        q: "Did you tell her about me? About us?",
+        a: [
+          { t: "Of course. I talk about you all the time.",                  n: "da1" },
+          { t: "Not much. I mentioned you were at your mother's.",           n: "q21" }
+        ]
+      },
+      q21: {
+        q: "You told her I wasn't home.",
+        a: [
+          { t: "I didn't mean it like that. It was just context.",           n: "db1" },
+          { t: "I suppose I did, yes.",                                      n: "q22" }
+        ]
+      },
+      q22: {
+        q: "And then what.",
+        a: [
+          { t: "And then nothing. That was the end of it.",                  n: "db1" },
+          { t: "And then I went home.",                                      n: "q23" }
+        ]
+      },
+      q23: {
+        q: "Straight home.",
+        a: [
+          { t: "Yes. Straight home.",                                        n: "db1" },
+          { t: "I stopped for petrol.",                                      n: "q24" }
+        ]
+      },
+      q24: {
+        q: "What time.",
+        a: [
+          { t: "I don't know exactly. Late-ish.",                            n: "de1" },
+          { t: "About half ten.",                                            n: "q25" }
+        ]
+      },
+      q25: {
+        q: "My sister said it was gone eleven when you left.",
+        a: [
+          { t: "Your sister has the times wrong. It was half ten.",          n: "de1" },
+          { t: "Then it was gone eleven. I wasn't watching the clock.",      n: "q26" }
+        ]
+      },
+      q26: {
+        q: "You weren't watching the clock. Did anything else happen.",
+        a: [
+          { t: "No. Nothing happened. We said goodbye and I left.",          n: "db1" },
+          { t: "We had a drink. One drink. At the pub across the road.",     n: "q27" }
+        ]
+      },
+      q27: {
+        q: "You had a drink with her and didn't tell me.",
+        a: [
+          { t: "I was going to tell you. I just hadn't found the right moment.", n: "db1" },
+          { t: "Yes.",                                                            n: "q28" }
+        ]
+      },
+      q28: {
+        q: "Why not.",
+        a: [
+          { t: "Because it was nothing. I didn't think it needed mentioning.", n: "da1" },
+          { t: "Because I knew how it would sound.",                           n: "q29" }
+        ]
+      },
+      q29: {
+        q: "How does it sound.",
+        a: [
+          { t: "It sounds like nothing, because it is nothing.",             n: "da1" },
+          { t: "Exactly like this.",                                         n: "q30" }
+        ]
+      },
+      q30: {
+        q: "And is it what it sounds like.",
+        a: [
+          { t: "No. Categorically not.",                                     n: "da1" },
+          { t: "No. But I understand why you'd wonder.",                     n: "q31" }
+        ]
+      },
+      q31: {
+        q: "Do you actually understand.",
+        a: [
+          { t: "Yes. Completely. I'd be furious too.",                       n: "dd1" },
+          { t: "I think so. I'd feel the same.",                             n: "q32" }
+        ]
+      },
+      q32: {
+        q: "Have you ever felt the same? About me.",
+        a: [
+          { t: "No. Nothing you've ever done has made me feel like this.",   n: "db1" },
+          { t: "Once or twice. Yes.",                                        n: "q33" }
+        ]
+      },
+      q33: {
+        q: "When.",
+        a: [
+          { t: "I can't pinpoint it. More of a general feeling.",            n: "dc1" },
+          { t: "The conference in Edinburgh. Two years ago.",                n: "q34" }
+        ]
+      },
+      q34: {
+        q: "I remember that conference. You called me every night.",
+        a: [
+          { t: "Because I missed you. That's all it was.",                   n: "db1" },
+          { t: "I did.",                                                     n: "q35" }
+        ]
+      },
+      q35: {
+        q: "Why.",
+        a: [
+          { t: "Because I love you. Because I always want to hear your voice.", n: "da1" },
+          { t: "Because I felt guilty. Even though nothing happened.",          n: "WIN" }
         ]
       },
 
-      // ── DOOM CORRIDOR A ───────────────────────────────────────────────────
-      // Tone: she suspects you're performing, not being genuine.
-      // Entry from: q1 (wrong), q2 (wrong), q4 (wrong), q8 (wrong), q11 (wrong), q14 (wrong)
+      // ── DOOM CORRIDOR A — The Performance ────────────────────────────────
+      // Triggered by: smooth, rehearsed-sounding answers.
+      // She suspects you've done this before. She's been keeping notes.
 
       da1: {
         doom: true,
-        q: "That was a very smooth answer. Did you practise it?",
+        q: "That was a very smooth answer.",
         a: [
-          { t: "No. It came naturally.",                       n: "da2" },
-          { t: "Of course not.",                               n: "da2" }
+          { t: "Thank you.",                                                 n: "da2" },
+          { t: "It wasn't meant to be smooth.",                             n: "da2" }
         ]
       },
       da2: {
         doom: true,
-        q: "It sounded rehearsed. Even your expression. My mother noticed.",
+        q: "I've heard that answer before. Almost word for word.",
         a: [
-          { t: "Your mother wasn't there.",                    n: "da3" },
-          { t: "I wasn't rehearsing anything.",                n: "da3" }
+          { t: "That's because it's true.",                                 n: "da3" },
+          { t: "I don't know what to tell you.",                            n: "da3" }
         ]
       },
       da3: {
         doom: true,
-        q: "She didn't need to be there. She watches your Instagram. Did you know that?",
+        q: "Do you remember saying it the first time? About six months ago. In the car.",
         a: [
-          { t: "She watches my Instagram?",                    n: "da4" },
-          { t: "I didn't know that, no.",                      n: "da4" }
+          { t: "I don't remember that specifically.",                       n: "da4" },
+          { t: "I say a lot of things in the car.",                         n: "da4" }
         ]
       },
       da4: {
         doom: true,
-        q: "Every post. Every story. She has screenshots. Should I ask her to share them?",
+        q: "I wrote it down. I write things down now.",
         a: [
-          { t: "I'd rather she didn't.",                       n: "da5" },
-          { t: "There's nothing on there to worry about.",     n: "da5" }
+          { t: "That's... I didn't know that.",                             n: "da5" },
+          { t: "Why would you do that?",                                    n: "da5" }
         ]
       },
       da5: {
         doom: true,
-        q: "That's exactly what someone with something to worry about would say.",
+        q: "Because things were starting to blur. What was real and what you'd told me.",
         a: [
-          { t: "I genuinely have nothing to hide.",            n: "SOFA" },
-          { t: "This feels like a trap.",                      n: "SOFA" }
+          { t: "I've never lied to you.",                                   n: "da6" },
+          { t: "That's a lot to carry on your own.",                        n: "da6" }
+        ]
+      },
+      da6: {
+        doom: true,
+        q: "I know.",
+        a: [
+          { t: "Let me explain.",                                           n: "SOFA" },
+          { t: "I'm sorry.",                                                n: "SOFA" }
         ]
       },
 
-      // ── DOOM CORRIDOR B ───────────────────────────────────────────────────
-      // Tone: she suspects you're rewriting history and gaslighting her.
-      // Entry from: q3 (wrong), q5 (wrong), q9 (wrong), q12 (wrong)
+      // ── DOOM CORRIDOR B — The Denial ─────────────────────────────────────
+      // Triggered by: denying things that are clearly, obviously true.
+      // She already knows. She just wanted to see if you'd say it.
 
       db1: {
         doom: true,
-        q: "Interesting. And you genuinely believe that?",
+        q: "You're doing that thing with your face.",
         a: [
-          { t: "Yes. Genuinely.",                              n: "db2" },
-          { t: "I think so, yes.",                             n: "db2" }
+          { t: "What thing?",                                               n: "db2" },
+          { t: "I'm not doing anything.",                                   n: "db2" }
         ]
       },
       db2: {
         doom: true,
-        q: "Because last Tuesday you implied the complete opposite. In front of people.",
+        q: "The thing where you go very calm. You get very calm when you're not telling me something.",
         a: [
-          { t: "I don't remember saying anything like that.",  n: "db3" },
-          { t: "What exactly did I say?",                      n: "db3" }
+          { t: "I'm calm because there's nothing to tell.",                 n: "db3" },
+          { t: "I'm always calm.",                                          n: "db3" }
         ]
       },
       db3: {
         doom: true,
-        q: "You don't remember. Of course you don't. Does it worry you, how much you don't remember?",
+        q: "Rachel noticed it too. At dinner last month.",
         a: [
-          { t: "I think you might be misremembering.",         n: "db4" },
-          { t: "A little, yes.",                               n: "db4" }
+          { t: "Rachel doesn't know me.",                                   n: "db4" },
+          { t: "Rachel notices too much.",                                  n: "db4" }
         ]
       },
       db4: {
         doom: true,
-        q: "I'm misremembering. Right. So Emma and Claire also misremembered?",
+        q: "She said you were very careful with your words all evening.",
         a: [
-          { t: "What did Emma and Claire say?",                n: "db5" },
-          { t: "People misremember things. It happens.",       n: "db5" }
+          { t: "I'm always careful with my words.",                         n: "db5" },
+          { t: "Rachel was reading into things.",                           n: "db5" }
         ]
       },
       db5: {
         doom: true,
-        q: "It's fine. I've been writing things down. I've been doing it for a while now.",
+        q: "She's known you for four years. She's not reading into things.",
         a: [
-          { t: "That seems... healthy.",                       n: "SOFA" },
-          { t: "How long is a while?",                         n: "SOFA" }
+          { t: "She's your friend. She's on your side.",                    n: "db6" },
+          { t: "I'll talk to Rachel.",                                      n: "db6" }
+        ]
+      },
+      db6: {
+        doom: true,
+        q: "I don't need people on my side. I just need you to be honest with me.",
+        a: [
+          { t: "I am honest with you.",                                     n: "SOFA" },
+          { t: "I'm trying to be.",                                         n: "SOFA" }
         ]
       },
 
-      // ── DOOM CORRIDOR C ───────────────────────────────────────────────────
-      // Tone: she suspects you don't truly respect her world — friends, family, ambitions.
-      // Entry from: q6 (wrong), q7 (wrong), q10 (wrong), q13 (wrong)
+      // ── DOOM CORRIDOR C — The Deflection ─────────────────────────────────
+      // Triggered by: answering a slightly different question than the one asked.
+      // She noticed. She always notices.
 
       dc1: {
         doom: true,
-        q: "You say that. But your face said something else entirely.",
+        q: "You're not going to answer that, are you.",
         a: [
-          { t: "My face didn't say anything.",                 n: "dc2" },
-          { t: "I didn't realise I was making a face.",        n: "dc2" }
+          { t: "I answered it.",                                            n: "dc2" },
+          { t: "I'm thinking.",                                             n: "dc2" }
         ]
       },
       dc2: {
         doom: true,
-        q: "Jess noticed as well. She texted me about it on the way home.",
+        q: "You answered something else. A slightly different question.",
         a: [
-          { t: "Jess needs to mind her own business.",         n: "dc3" },
-          { t: "What did Jess say?",                           n: "dc3" }
+          { t: "That's the same question.",                                 n: "dc3" },
+          { t: "I answered what you asked.",                                n: "dc3" }
         ]
       },
       dc3: {
         doom: true,
-        q: "She said you looked like you'd rather be anywhere else. Were you?",
+        q: "It isn't. And you know it isn't.",
         a: [
-          { t: "No. I was completely present.",                n: "dc4" },
-          { t: "There were moments, yes.",                     n: "dc4" }
+          { t: "Then tell me what you're actually asking.",                 n: "dc4" },
+          { t: "I genuinely thought that's what you meant.",               n: "dc4" }
         ]
       },
       dc4: {
         doom: true,
-        q: "She also said you checked your phone four times during dinner. Did you?",
+        q: "I'm asking what I asked.",
         a: [
-          { t: "I don't think it was four times.",             n: "dc5" },
-          { t: "Probably. Yes.",                               n: "dc5" }
+          { t: "Which was?",                                                n: "dc5" },
+          { t: "I'm sorry. Say it again.",                                  n: "dc5" }
         ]
       },
       dc5: {
         doom: true,
-        q: "She counted.",
+        q: "Did anything else happen.",
         a: [
-          { t: "Of course she did.",                           n: "SOFA" },
-          { t: "I'll apologise to everyone next time.",        n: "SOFA" }
+          { t: "No.",                                                       n: "dc6" },
+          { t: "I've told you what happened.",                              n: "dc6" }
+        ]
+      },
+      dc6: {
+        doom: true,
+        q: "Okay.",
+        a: [
+          { t: "That's it? Okay?",                                          n: "SOFA" },
+          { t: "Are you alright?",                                          n: "SOFA" }
+        ]
+      },
+
+      // ── DOOM CORRIDOR D — The Overcorrection ─────────────────────────────
+      // Triggered by: agreeing too fast, swinging to the opposite position.
+      // You went from one thing to its opposite in four seconds. She noticed.
+
+      dd1: {
+        doom: true,
+        q: "Now you're overcorrecting.",
+        a: [
+          { t: "I'm not. I mean it.",                                       n: "dd2" },
+          { t: "I'm just trying to be honest.",                             n: "dd2" }
+        ]
+      },
+      dd2: {
+        doom: true,
+        q: "You went from one position to the exact opposite in about four seconds.",
+        a: [
+          { t: "Because I was wrong before and I'm correcting it.",         n: "dd3" },
+          { t: "Because I'm trying to get it right.",                       n: "dd3" }
+        ]
+      },
+      dd3: {
+        doom: true,
+        q: "Which position was the true one.",
+        a: [
+          { t: "The second one.",                                           n: "dd4" },
+          { t: "Both of them, in different ways.",                          n: "dd4" }
+        ]
+      },
+      dd4: {
+        doom: true,
+        q: "They can't both be true. They contradict each other.",
+        a: [
+          { t: "I know. I'm trying to work out what I actually think.",     n: "dd5" },
+          { t: "Relationships are complicated.",                            n: "dd5" }
+        ]
+      },
+      dd5: {
+        doom: true,
+        q: "While I'm standing here.",
+        a: [
+          { t: "I'm sorry.",                                                n: "dd6" },
+          { t: "Give me a moment.",                                         n: "dd6" }
+        ]
+      },
+      dd6: {
+        doom: true,
+        q: "Take your time.",
+        a: [
+          { t: "Thank you.",                                                n: "SOFA" },
+          { t: "I just need to...",                                         n: "SOFA" }
+        ]
+      },
+
+      // ── DOOM CORRIDOR E — The Logistics ──────────────────────────────────
+      // Triggered by: getting the time wrong when her sister was watching.
+      // Every detail is being checked against a version she already has.
+
+      de1: {
+        doom: true,
+        q: "That's a very specific answer for someone who wasn't watching the clock.",
+        a: [
+          { t: "I glanced at it when I stopped.",                           n: "de2" },
+          { t: "I'm approximating.",                                        n: "de2" }
+        ]
+      },
+      de2: {
+        doom: true,
+        q: "My sister has a very good memory for times.",
+        a: [
+          { t: "People remember things differently.",                       n: "de3" },
+          { t: "Your sister and I clearly remember it differently.",        n: "de3" }
+        ]
+      },
+      de3: {
+        doom: true,
+        q: "She had no reason to check the time either. But she did.",
+        a: [
+          { t: "Why was she timing me?",                                    n: "de4" },
+          { t: "I don't know why she'd do that.",                          n: "de4" }
+        ]
+      },
+      de4: {
+        doom: true,
+        q: "She wasn't timing you. She just remembered.",
+        a: [
+          { t: "Then she's mistaken.",                                      n: "de5" },
+          { t: "I can't account for what your sister remembers.",           n: "de5" }
+        ]
+      },
+      de5: {
+        doom: true,
+        q: "You can't account for it.",
+        a: [
+          { t: "No.",                                                       n: "de6" },
+          { t: "I'm sorry. I don't know what you want me to say.",         n: "de6" }
+        ]
+      },
+      de6: {
+        doom: true,
+        q: "I want you to tell me what time you left.",
+        a: [
+          { t: "I've told you.",                                            n: "SOFA" },
+          { t: "I don't know exactly.",                                     n: "SOFA" }
         ]
       },
 
@@ -594,7 +861,7 @@
     // GAME ENGINE
     // ─────────────────────────────────────────────────────────────────────────
 
-    const TOTAL_QUESTIONS = 15; // golden path length for progress bar
+    const TOTAL_QUESTIONS = 35; // golden path length for progress bar
 
     let state = {
       nodeId:    "q1",
@@ -624,11 +891,8 @@
 
     function renderQuestion() {
       const node = TREE[state.nodeId];
-      const pct  = Math.min(96, ((state.qNum - 1) / TOTAL_QUESTIONS) * 100);
 
-      el("q-num").textContent          = "Q" + state.qNum;
       el("question-text").textContent  = node.q;
-      el("progress-fill").style.width  = pct + "%";
 
       const answersEl = el("answers");
       answersEl.innerHTML = "";
@@ -679,10 +943,7 @@
           // Rebuild content area and fade back in
           content.innerHTML = `
             <p class="question-text" id="question-text"></p>
-            <div class="answers" id="answers"></div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progress-fill"></div>
-            </div>`;
+            <div class="answers" id="answers"></div>`;
           content.className = "fade-start";
 
           requestAnimationFrame(() => {
@@ -711,14 +972,12 @@
           <div class="end-screen">
             <span class="end-icon">🛋️</span>
             <p class="end-title bad">You're sleeping on the sofa.</p>
-            <p class="end-sub">You made it to question</p>
-            <p class="end-stat bad">${q} of ${TOTAL_QUESTIONS}</p>
             <p class="end-note">
               You took a wrong turn somewhere back there.<br>
               The sofa is quite comfortable this time of year.
             </p>
             <div class="btn-row">
-              <button class="share-btn" onclick="shareScore(${q})">Share your shame</button>
+              <button class="share-btn" onclick="shareScore()">Share your shame</button>
               <button class="retry-btn" onclick="restart()">Try Again</button>
             </div>
             <p class="copied-msg" id="copied-msg"></p>
@@ -749,6 +1008,8 @@
             <div class="win-reveal">
               The secret? Brutal, uncomfortable honesty — every single time.
               The smoother the answer, the faster the sofa.
+              It started with a bum. It ended with a confession about Edinburgh.
+              You are a rare and terrifying individual.
             </div>
             <div class="btn-row">
               <button class="share-btn" onclick="shareWin()">Brag about this</button>
@@ -765,9 +1026,9 @@
 
     // ── Share helpers ────────────────────────────────────────────────────────
 
-    function shareScore(q) {
-      const text = `I survived ${q} question${q === 1 ? "" : "s"} before ending up on the sofa. `
-                 + `Can YOU do better? Play "Does This Make Me Look Fat?" 🛋️ `
+    function shareScore() {
+      const text = `I ended up on the sofa. Can YOU do better? `
+                 + `Play "Does This Make Me Look Fat?" 🛋️ `
                  + window.location.href;
       navigator.clipboard.writeText(text).then(() => showCopied("Copied — go share your shame."));
     }
@@ -797,10 +1058,7 @@
       const content = el("game-content");
       content.innerHTML = `
         <p class="question-text" id="question-text"></p>
-        <div class="answers" id="answers"></div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>`;
+        <div class="answers" id="answers"></div>`;
       content.className = "fade-in";
 
       renderQuestion();
