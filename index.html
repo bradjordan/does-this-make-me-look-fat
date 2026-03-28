@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Does This Make Me Look Fat?</title>
+
+  <!-- Open Graph / WhatsApp / Twitter share card -->
+  <meta property="og:title" content="Does This Make Me Look Fat?" />
+  <meta property="og:description" content="A game with no good answers. One path wins. Can you find it?" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Does This Make Me Look Fat?" />
+  <meta name="twitter:description" content="A game with no good answers. One path wins. Can you find it?" />
+
+  <style>
+    /* ─── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ─── Page ───────────────────────────────────────────── */
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f3ee;
+      font-family: Georgia, 'Times New Roman', serif;
+      padding: 2rem 1rem;
+    }
+
+    /* ─── Card ───────────────────────────────────────────── */
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2ddd6;
+      border-radius: 16px;
+      padding: 2.25rem 2.25rem 2rem;
+      max-width: 580px;
+      width: 100%;
+      transition: background 0.6s ease, border-color 0.6s ease;
+    }
+
+    .card.doom {
+      background: #fff8f8;
+      border-color: #f0c0c0;
+    }
+
+    .card.winning {
+      background: #fffdf5;
+      border-color: #f0d080;
+    }
+
+    /* ─── Card header ────────────────────────────────────── */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .game-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      font-weight: 500;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .q-num {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+
+    .heart {
+      font-size: 15px;
+      transition: opacity 1s ease, filter 1s ease;
+      color: #e05555;
+    }
+
+    /* ─── Question ───────────────────────────────────────── */
+    .question-text {
+      font-size: 1.5rem;
+      line-height: 1.5;
+      color: #1a1a1a;
+      margin-bottom: 2rem;
+      min-height: 72px;
+      font-weight: 400;
+    }
+
+    /* ─── Answer buttons ─────────────────────────────────── */
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ans-btn {
+      background: transparent;
+      border: 1px solid #e0dbd3;
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      text-align: left;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.9rem;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s, background 0.18s;
+      line-height: 1.5;
+    }
+
+    .ans-btn:hover {
+      border-color: #c47a20;
+      color: #c47a20;
+      background: #fdf6ec;
+    }
+
+    .ans-btn:active {
+      transform: scale(0.99);
+    }
+
+    .ans-btn.selected {
+      border-color: #c47a20;
+      background: #fdf0db;
+      color: #8a5010;
+    }
+
+    .ans-btn:disabled {
+      cursor: default;
+    }
+
+    /* ─── Progress bar ───────────────────────────────────── */
+    .progress-bar {
+      height: 2px;
+      background: #ede9e3;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #c47a20;
+      border-radius: 2px;
+      transition: width 0.55s ease;
+    }
+
+    /* ─── Game over / Win screens ────────────────────────── */
+    .end-screen {
+      text-align: center;
+      padding: 0.25rem 0;
+    }
+
+    .end-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1.25rem;
+      line-height: 1;
+    }
+
+    .end-title {
+      font-size: 1.65rem;
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+      font-weight: 400;
+    }
+
+    .end-title.bad  { color: #a02020; }
+    .end-title.good { color: #7a5010; }
+
+    .end-sub {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.875rem;
+      color: #888;
+      margin-bottom: 0.25rem;
+      line-height: 1.6;
+    }
+
+    .end-stat {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0.6rem 0 0.35rem;
+    }
+
+    .end-stat.bad  { color: #a02020; }
+    .end-stat.good { color: #8a5010; }
+
+    .end-note {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.82rem;
+      color: #999;
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .win-reveal {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.82rem;
+      color: #7a5010;
+      line-height: 1.65;
+      background: #fdf0db;
+      border-left: 2px solid #c47a20;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      background: transparent;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.6rem 1.1rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.875rem;
+      color: #888;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s;
+    }
+
+    .share-btn:hover {
+      border-color: #c47a20;
+      color: #c47a20;
+    }
+
+    .retry-btn {
+      background: #c47a20;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.875rem;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.18s;
+    }
+
+    .retry-btn:hover { background: #a05e10; }
+
+    .copied-msg {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.78rem;
+      color: #4a8a30;
+      margin-top: 0.6rem;
+      min-height: 1.1rem;
+    }
+
+    /* ─── Transitions ────────────────────────────────────── */
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .fade-start {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .card { padding: 1.75rem 1.5rem 1.5rem; }
+      .question-text { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <div class="card-top">
+      <span class="game-title">Does this make me look fat?</span>
+      <div class="top-right">
+        <span class="q-num" id="q-num">Q1</span>
+        <span class="heart" id="heart">♥</span>
+      </div>
+    </div>
+
+    <div id="game-content" class="fade-in">
+      <p class="question-text" id="question-text"></p>
+      <div class="answers" id="answers"></div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────────────────
+    // QUESTION TREE
+    //
+    // Each node:
+    //   q      — the question string
+    //   doom   — (optional) true: increments hidden poison score
+    //   a      — array of exactly two answers:
+    //              t  — answer text
+    //              n  — next node ID
+    //
+    // Special terminal node IDs:
+    //   "SOFA" — game over
+    //   "WIN"  — victory
+    //
+    // GOLDEN PATH: q1 → q2 → q3 → ... → q15 → WIN
+    // Correct answers are always the second option (index 1) on the golden path.
+    // The winning secret: brutal, uncomfortable honesty every single time.
+    //
+    // DOOM CORRIDORS: da_, db_, dc_ prefixes
+    // Wrong turns funnel into shared corridors of 5 questions before the sofa.
+    // Players who went wrong at q3 and q11 may share the same corridor —
+    // they will never know.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const TREE = {
+
+      // ── GOLDEN PATH (q1–q15) ──────────────────────────────────────────────
+      // Rule: answer index 1 always continues the golden path.
+      // Answer index 0 always routes to a doom corridor.
+
+      q1: {
+        q: "Does this dress make me look fat?",
+        a: [
+          { t: "No. You look absolutely gorgeous.",            n: "da1" },
+          { t: "A little, honestly. Try the blue one.",        n: "q2"  }
+        ]
+      },
+      q2: {
+        q: "You hesitated just then. What were you actually thinking?",
+        a: [
+          { t: "Nothing. I wasn't hesitating at all.",         n: "da1" },
+          { t: "That the blue dress really is better on you.", n: "q3"  }
+        ]
+      },
+      q3: {
+        q: "My mother thinks you never really liked her.",
+        a: [
+          { t: "That's not true. I've always made an effort.", n: "db1" },
+          { t: "Your mother isn't wrong.",                     n: "q4"  }
+        ]
+      },
+      q4: {
+        q: "Do you remember the exact date of our first anniversary?",
+        a: [
+          { t: "Of course. It's the most important date in my life.", n: "da1" },
+          { t: "Not off the top of my head, no.",                    n: "q5"  }
+        ]
+      },
+      q5: {
+        q: "Sarah says you were flirting with her at the party. Were you?",
+        a: [
+          { t: "Absolutely not. I can't believe she'd say that.", n: "db1" },
+          { t: "I was being friendly. She may have misread it.", n: "q6"  }
+        ]
+      },
+      q6: {
+        q: "Be honest. Do you actually like my friends?",
+        a: [
+          { t: "Yes! They're all wonderful people.",           n: "dc1" },
+          { t: "Some of them, yes. Not all of them.",          n: "q7"  }
+        ]
+      },
+      q7: {
+        q: "My sister earns considerably more than you. Does that bother you?",
+        a: [
+          { t: "Not at all. Good for her, honestly.",          n: "dc1" },
+          { t: "A bit, yes. I'd rather not discuss it.",       n: "q8"  }
+        ]
+      },
+      q8: {
+        q: "Were you actually listening to me just now?",
+        a: [
+          { t: "Yes. Every single word. You were saying...",   n: "da1" },
+          { t: "Not entirely, no. I'm sorry.",                 n: "q9"  }
+        ]
+      },
+      q9: {
+        q: "Why did you just say I looked nice?",
+        a: [
+          { t: "Because you do! You always look nice.",        n: "db1" },
+          { t: "You looked like you needed to hear it.",       n: "q10" }
+        ]
+      },
+      q10: {
+        q: "Do you think about your ex?",
+        a: [
+          { t: "Never. She means absolutely nothing to me.",   n: "dc1" },
+          { t: "Occasionally. Less than I used to.",           n: "q11" }
+        ]
+      },
+      q11: {
+        q: "Am I the funniest person you've ever dated?",
+        a: [
+          { t: "Without question. Absolutely, yes.",           n: "da1" },
+          { t: "Top three, I'd say.",                          n: "q12" }
+        ]
+      },
+      q12: {
+        q: "You think this house could be cleaner, don't you?",
+        a: [
+          { t: "No, it's perfect. You keep it immaculate.",   n: "db1" },
+          { t: "Yes, I do.",                                   n: "q13" }
+        ]
+      },
+      q13: {
+        q: "That woman at the restaurant. How many times did you look at her?",
+        a: [
+          { t: "I didn't look at her once. I only see you.",  n: "dc1" },
+          { t: "Two or three times. She had an interesting jacket.", n: "q14" }
+        ]
+      },
+      q14: {
+        q: "Do you think I'm getting more difficult to live with?",
+        a: [
+          { t: "No. You're an absolute joy. Every single day.", n: "da1" },
+          { t: "In some ways, yes. But so am I.",               n: "q15" }
+        ]
+      },
+      q15: {
+        q: "Last question. I need you to be completely, brutally honest. Do you love me?",
+        a: [
+          { t: "More than anything in the entire world. Forever and always.", n: "da1" },
+          { t: "Yes. Even when it's hard.",                                   n: "WIN"  }
+        ]
+      },
+
+      // ── DOOM CORRIDOR A ───────────────────────────────────────────────────
+      // Tone: she suspects you're performing, not being genuine.
+      // Entry from: q1 (wrong), q2 (wrong), q4 (wrong), q8 (wrong), q11 (wrong), q14 (wrong)
+
+      da1: {
+        doom: true,
+        q: "That was a very smooth answer. Did you practise it?",
+        a: [
+          { t: "No. It came naturally.",                       n: "da2" },
+          { t: "Of course not.",                               n: "da2" }
+        ]
+      },
+      da2: {
+        doom: true,
+        q: "It sounded rehearsed. Even your expression. My mother noticed.",
+        a: [
+          { t: "Your mother wasn't there.",                    n: "da3" },
+          { t: "I wasn't rehearsing anything.",                n: "da3" }
+        ]
+      },
+      da3: {
+        doom: true,
+        q: "She didn't need to be there. She watches your Instagram. Did you know that?",
+        a: [
+          { t: "She watches my Instagram?",                    n: "da4" },
+          { t: "I didn't know that, no.",                      n: "da4" }
+        ]
+      },
+      da4: {
+        doom: true,
+        q: "Every post. Every story. She has screenshots. Should I ask her to share them?",
+        a: [
+          { t: "I'd rather she didn't.",                       n: "da5" },
+          { t: "There's nothing on there to worry about.",     n: "da5" }
+        ]
+      },
+      da5: {
+        doom: true,
+        q: "That's exactly what someone with something to worry about would say.",
+        a: [
+          { t: "I genuinely have nothing to hide.",            n: "SOFA" },
+          { t: "This feels like a trap.",                      n: "SOFA" }
+        ]
+      },
+
+      // ── DOOM CORRIDOR B ───────────────────────────────────────────────────
+      // Tone: she suspects you're rewriting history and gaslighting her.
+      // Entry from: q3 (wrong), q5 (wrong), q9 (wrong), q12 (wrong)
+
+      db1: {
+        doom: true,
+        q: "Interesting. And you genuinely believe that?",
+        a: [
+          { t: "Yes. Genuinely.",                              n: "db2" },
+          { t: "I think so, yes.",                             n: "db2" }
+        ]
+      },
+      db2: {
+        doom: true,
+        q: "Because last Tuesday you implied the complete opposite. In front of people.",
+        a: [
+          { t: "I don't remember saying anything like that.",  n: "db3" },
+          { t: "What exactly did I say?",                      n: "db3" }
+        ]
+      },
+      db3: {
+        doom: true,
+        q: "You don't remember. Of course you don't. Does it worry you, how much you don't remember?",
+        a: [
+          { t: "I think you might be misremembering.",         n: "db4" },
+          { t: "A little, yes.",                               n: "db4" }
+        ]
+      },
+      db4: {
+        doom: true,
+        q: "I'm misremembering. Right. So Emma and Claire also misremembered?",
+        a: [
+          { t: "What did Emma and Claire say?",                n: "db5" },
+          { t: "People misremember things. It happens.",       n: "db5" }
+        ]
+      },
+      db5: {
+        doom: true,
+        q: "It's fine. I've been writing things down. I've been doing it for a while now.",
+        a: [
+          { t: "That seems... healthy.",                       n: "SOFA" },
+          { t: "How long is a while?",                         n: "SOFA" }
+        ]
+      },
+
+      // ── DOOM CORRIDOR C ───────────────────────────────────────────────────
+      // Tone: she suspects you don't truly respect her world — friends, family, ambitions.
+      // Entry from: q6 (wrong), q7 (wrong), q10 (wrong), q13 (wrong)
+
+      dc1: {
+        doom: true,
+        q: "You say that. But your face said something else entirely.",
+        a: [
+          { t: "My face didn't say anything.",                 n: "dc2" },
+          { t: "I didn't realise I was making a face.",        n: "dc2" }
+        ]
+      },
+      dc2: {
+        doom: true,
+        q: "Jess noticed as well. She texted me about it on the way home.",
+        a: [
+          { t: "Jess needs to mind her own business.",         n: "dc3" },
+          { t: "What did Jess say?",                           n: "dc3" }
+        ]
+      },
+      dc3: {
+        doom: true,
+        q: "She said you looked like you'd rather be anywhere else. Were you?",
+        a: [
+          { t: "No. I was completely present.",                n: "dc4" },
+          { t: "There were moments, yes.",                     n: "dc4" }
+        ]
+      },
+      dc4: {
+        doom: true,
+        q: "She also said you checked your phone four times during dinner. Did you?",
+        a: [
+          { t: "I don't think it was four times.",             n: "dc5" },
+          { t: "Probably. Yes.",                               n: "dc5" }
+        ]
+      },
+      dc5: {
+        doom: true,
+        q: "She counted.",
+        a: [
+          { t: "Of course she did.",                           n: "SOFA" },
+          { t: "I'll apologise to everyone next time.",        n: "SOFA" }
+        ]
+      },
+
+      // ── TERMINALS ─────────────────────────────────────────────────────────
+      SOFA: { type: "gameover" },
+      WIN:  { type: "win"      }
+    };
+
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // GAME ENGINE
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const TOTAL_QUESTIONS = 15; // golden path length for progress bar
+
+    let state = {
+      nodeId:    "q1",
+      qNum:      1,
+      doomScore: 0,
+      animating: false
+    };
+
+    // ── DOM helpers ──────────────────────────────────────────────────────────
+
+    function el(id) { return document.getElementById(id); }
+
+    function updateHeart() {
+      const h = el("heart");
+      if (!h) return;
+      const opacity = Math.max(0.15, 1 - state.doomScore * 0.22);
+      const grey    = Math.min(80, state.doomScore * 20);
+      h.style.opacity = opacity;
+      h.style.filter  = state.doomScore > 0 ? `grayscale(${grey}%)` : "none";
+    }
+
+    function updateCard() {
+      el("card").className = "card" + (state.doomScore > 0 ? " doom" : "");
+    }
+
+    // ── Render a question node ───────────────────────────────────────────────
+
+    function renderQuestion() {
+      const node = TREE[state.nodeId];
+      const pct  = Math.min(96, ((state.qNum - 1) / TOTAL_QUESTIONS) * 100);
+
+      el("q-num").textContent          = "Q" + state.qNum;
+      el("question-text").textContent  = node.q;
+      el("progress-fill").style.width  = pct + "%";
+
+      const answersEl = el("answers");
+      answersEl.innerHTML = "";
+      node.a.forEach((answer, idx) => {
+        const btn = document.createElement("button");
+        btn.className   = "ans-btn";
+        btn.textContent = answer.t;
+        btn.onclick     = () => handleAnswer(idx);
+        answersEl.appendChild(btn);
+      });
+
+      updateHeart();
+      updateCard();
+    }
+
+    // ── Handle an answer choice ──────────────────────────────────────────────
+
+    function handleAnswer(idx) {
+      if (state.animating) return;
+      state.animating = true;
+
+      const node   = TREE[state.nodeId];
+      const chosen = node.a[idx];
+
+      // Highlight selection, disable all buttons
+      document.querySelectorAll(".ans-btn").forEach((btn, i) => {
+        if (i === idx) btn.classList.add("selected");
+        btn.disabled = true;
+      });
+
+      const content = el("game-content");
+
+      // Short pause so the player sees their selection, then fade out
+      setTimeout(() => {
+        content.className = "fade-out";
+
+        setTimeout(() => {
+          const next = TREE[chosen.n];
+
+          if (next.type === "gameover") { showSofa(); return; }
+          if (next.type === "win")      { showWin();  return; }
+
+          // Advance state
+          state.nodeId = chosen.n;
+          state.qNum++;
+          if (next.doom) state.doomScore++;
+
+          // Rebuild content area and fade back in
+          content.innerHTML = `
+            <p class="question-text" id="question-text"></p>
+            <div class="answers" id="answers"></div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>`;
+          content.className = "fade-start";
+
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              content.className = "fade-in";
+              renderQuestion();
+              state.animating = false;
+            });
+          });
+        }, 300);
+      }, 380);
+    }
+
+    // ── Game over screen ─────────────────────────────────────────────────────
+
+    function showSofa() {
+      const q    = state.qNum;
+      const card = el("card");
+      card.className = "card doom";
+
+      const content = el("game-content");
+      content.className = "fade-out";
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="end-screen">
+            <span class="end-icon">🛋️</span>
+            <p class="end-title bad">You're sleeping on the sofa.</p>
+            <p class="end-sub">You made it to question</p>
+            <p class="end-stat bad">${q} of ${TOTAL_QUESTIONS}</p>
+            <p class="end-note">
+              You took a wrong turn somewhere back there.<br>
+              The sofa is quite comfortable this time of year.
+            </p>
+            <div class="btn-row">
+              <button class="share-btn" onclick="shareScore(${q})">Share your shame</button>
+              <button class="retry-btn" onclick="restart()">Try Again</button>
+            </div>
+            <p class="copied-msg" id="copied-msg"></p>
+          </div>`;
+        content.className = "fade-start";
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => content.className = "fade-in")
+        );
+      }, 300);
+    }
+
+    // ── Win screen ───────────────────────────────────────────────────────────
+
+    function showWin() {
+      const card = el("card");
+      card.className = "card winning";
+
+      const content = el("game-content");
+      content.className = "fade-out";
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="end-screen">
+            <span class="end-icon">🏆</span>
+            <p class="end-title good">Somehow. Impossibly. You survived.</p>
+            <p class="end-sub">All ${TOTAL_QUESTIONS} questions. One path. You found it.</p>
+            <p class="end-stat good">You are the 1 in a million.</p>
+            <div class="win-reveal">
+              The secret? Brutal, uncomfortable honesty — every single time.
+              The smoother the answer, the faster the sofa.
+            </div>
+            <div class="btn-row">
+              <button class="share-btn" onclick="shareWin()">Brag about this</button>
+              <button class="retry-btn" onclick="restart()">Play Again</button>
+            </div>
+            <p class="copied-msg" id="copied-msg"></p>
+          </div>`;
+        content.className = "fade-start";
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => content.className = "fade-in")
+        );
+      }, 300);
+    }
+
+    // ── Share helpers ────────────────────────────────────────────────────────
+
+    function shareScore(q) {
+      const text = `I survived ${q} question${q === 1 ? "" : "s"} before ending up on the sofa. `
+                 + `Can YOU do better? Play "Does This Make Me Look Fat?" 🛋️ `
+                 + window.location.href;
+      navigator.clipboard.writeText(text).then(() => showCopied("Copied — go share your shame."));
+    }
+
+    function shareWin() {
+      const text = `I found the ONE true path through all ${TOTAL_QUESTIONS} questions. `
+                 + `No sofa. I am undefeated. Play "Does This Make Me Look Fat?" and try to beat me. 🏆 `
+                 + window.location.href;
+      navigator.clipboard.writeText(text).then(() => showCopied("Copied — go rub it in."));
+    }
+
+    function showCopied(msg) {
+      const m = el("copied-msg");
+      if (!m) return;
+      m.textContent = msg;
+      setTimeout(() => { if (m) m.textContent = ""; }, 3000);
+    }
+
+    // ── Restart ──────────────────────────────────────────────────────────────
+
+    function restart() {
+      state = { nodeId: "q1", qNum: 1, doomScore: 0, animating: false };
+
+      const card = el("card");
+      card.className = "card";
+
+      const content = el("game-content");
+      content.innerHTML = `
+        <p class="question-text" id="question-text"></p>
+        <div class="answers" id="answers"></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>`;
+      content.className = "fade-in";
+
+      renderQuestion();
+    }
+
+    // ── Boot ─────────────────────────────────────────────────────────────────
+    renderQuestion();
+  </script>
+</body>
+</html>
